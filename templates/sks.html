@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Input SKS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f4f7;
+        }
+        .container {
+            width: 420px;
+            margin: 70px auto;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 6px 0 15px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #2d89ef;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #1b5fa7;
+        }
+        .back {
+            text-align: center;
+            margin-top: 15px;
+        }
+        a {
+            text-decoration: none;
+            color: #2d89ef;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>INPUT SKS</h2>
+    <form method="post">
+        {% for i in range(3) %}
+            <label>SKS {{ i+1 }}</label>
+            <input type="number" name="sks{{ i }}" required>
+        {% endfor %}
+        <button type="submit">Simpan SKS</button>
+    </form>
+
+    <div class="back">
+        <a href="/">⬅ Kembali ke Menu</a>
+    </div>
+</div>
+
+</body>
+</html>

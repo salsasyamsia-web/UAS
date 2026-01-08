@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Biodata Mahasiswa</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f4f7;
+        }
+        .container {
+            width: 450px;
+            margin: 60px auto;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2, h3 {
+            text-align: center;
+        }
+        label {
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #2d89ef;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #1b5fa7;
+        }
+        hr {
+            margin: 25px 0;
+        }
+        .hasil p {
+            margin: 5px 0;
+        }
+        .back {
+            text-align: center;
+            margin-top: 15px;
+        }
+        a {
+            text-decoration: none;
+            color: #2d89ef;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>BIODATA MAHASISWA</h2>
+
+    <form method="post">
+        <label>Nama</label>
+        <input type="text" name="nama" required>
+
+        <label>NIM</label>
+        <input type="text" name="nim" required>
+
+        <label>Prodi</label>
+        <input type="text" name="prodi" required>
+
+        <br>
+        <button type="submit">Simpan Biodata</button>
+    </form>
+
+    <hr>
+
+    <h3 style="text-align: left">Biodata Tersimpan</h3>
+
+    <div class="hasil">
+        {% if biodata %}
+            <p><b>Nama</b> : {{ biodata.nama }}</p>
+            <p><b>NIM</b> : {{ biodata.nim }}</p>
+            <p><b>Prodi</b> : {{ biodata.prodi }}</p>
+        {% else %}
+            <p><i>Biodata belum diinput</i></p>
+        {% endif %}
+    </div>
+
+    <div class="back">
+        <a href="/">Kembali</a>
+    </div>
+</div>
+
+</body>
+</html>

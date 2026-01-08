@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Daftar Nilai</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f4f7;
+        }
+        .container {
+            width: 650px;
+            margin: 60px auto;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            background: #2d89ef;
+            color: white;
+            padding: 10px;
+        }
+        td {
+            padding: 8px;
+            text-align: center;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        .kosong {
+            text-align: center;
+            font-weight: bold;
+            color: #d9534f;
+            margin: 20px 0;
+        }
+        .back {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .back a {
+            text-decoration: none;
+            color: #2d89ef;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>DAFTAR NILAI</h2>
+
+    {% if data %}
+    <table>
+        <tr>
+            <th>SKS</th>
+            <th>Nilai</th>
+            <th>Label</th>
+            <th>Bobot</th>
+        </tr>
+
+        {% for d in data %}
+        <tr>
+            <td>{{ d[0] }}</td>
+            <td>{{ d[1] }}</td>
+            <td>{{ d[2] }}</td>
+            <td>{{ d[3] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+        <div class="kosong">Nilai masih kosong</div>
+    {% endif %}
+
+    <div class="back">
+        <a href="/">⬅ Kembali ke Menu</a>
+    </div>
+</div>
+
+</body>
+</html>
