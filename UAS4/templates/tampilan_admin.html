@@ -1,0 +1,25 @@
+<nav><a href="/Admin">Home</a> | <a href="/logout">Logout</a></nav>
+<h1>Dashboard Admin</h1>
+<p>current user: {{ session['user_login'] }}</p>
+<h3>Buat Akun</h3>
+<form action="/add_user" method="POST">
+    <input type="text" name="username" placeholder="Username">
+    <input type="password" name="password" placeholder="Password">
+    <input type="text" name="nim" placeholder="NIM (untuk mhs)">
+    <select name="role">
+        <option value="Mahasiswa">Mahasiswa</option>
+        <option value="Dosen">Dosen</option>
+        <option value="Admin">Admin</option>
+    </select>
+    <button type="submit">Buat</button>
+</form>
+<hr>
+<h3>Daftar User</h3>
+{% for user in users %}
+<p>
+    {{ loop.index }} {{ user.role }} <b>{{ user.username }}</b> 
+    {% if user.id != 1 %}
+    <a href="{{ url_for('delete_user', user_id=user.id) }}" style="color: rgb(255, 0, 0);">hapus</a>
+    {% endif %}
+</p>
+{% endfor %}

@@ -1,0 +1,14 @@
+<nav><a href="/dashboard/mahasiswa">mahasiswa</a> | <a href="/mahasiswa/pertemuan">Pertemuan</a> | <a href="/logout">Logout</a></nav>
+<hr>
+{% if p_detail %}
+    <h3>Detail: {{ p_detail.nama }}</h3>
+    <div id="qr-box" style="display:none;">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ session['user_login'] }}|{{ session['nim'] }}|{{ p_detail.id }}">
+    </div>
+    <button onclick="document.getElementById('qr-box').style.display='block'">tampilkan url mahasiswa</button>
+{% else %}
+    <h3>Daftar Pertemuan</h3>
+    {% for p in pertemuan %}
+    <p>web {{ p.nama }} <a href="/mahasiswa/pertemuan/{{ p.id }}">detail</a></p>
+    {% endfor %}
+{% endif %}

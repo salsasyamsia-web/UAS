@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kelola Pertemuan - Dosen</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+</head>
+<body>
+    <nav>
+        <a href="/dashboard/dosen">Dashboard</a> | 
+        <a href="/dosen/pertemuan">Pertemuan</a> | 
+        <a href="/logout">Logout</a>
+    </nav>
+    <hr>
+
+    {% if p_detail %}
+        <h2>Pertemuan: {{ p_detail.nama }}</h2>
+        <p>Jadwal: {{ p_detail.mulai }} - {{ p_detail.selesai }}</p>
+
+        <div id="error-alert" class="error-msg"></div>
+
+        <button id="btn-start" onclick="startScanner()">
+            Mulai Scanner
+        </button>
+
+        <div id="camBox" style="display:none;">
+            <video id="video" width="400" height="300" autoplay playsinline></video>
+        </div>
+        <canvas id="canvas" style="display:none;"></canvas>
+
+        <h3>Daftar Hadir Mahasiswa:</h3>
+        <p id="empty-text">Tidak ada data</p>
+        <ul id="list-hadir"></ul>
+
+        <script>
+            const PER_ID = "{{ p_detail.id }}";  // ID pertemuan dari backend
+        </script>
+
+        <script>
+            let scannedUsers = new Set();
+            let video = document.getElementById('video');
+            let canvas = document.getElementById('canvas');
+            let ctx = canvas.getContext('2d');
+            let cameraStream = null;
+
+            function startScanner() {
+                document.getElementById('camBox').style.display = 'block';
+                
+                navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+                    .then(function(stream) {
+                        cameraStream = stream;
+                        video.srcObject = stream;
+                        requestAnimationFrame(tick);
+                    });
+            }
+            function stopScanner() {
+                if (cameraStream) {
+                    cameraStream.getTracks().forEach(track => track.stop());
+                    cameraStream = null;
+                }
+                document.getElementById('camBox').style.display = 'none';
+            }
+
+            function tick() {
+                if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                    canvas.height = video.videoHeight;
+                    canvas.width = video.videoWidth;
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    var code = jsQR(imageData.data, imageData.width, imageData.height);
+
+                    if (code) {
+                        handleScan(code.data);
+                    }
+                }
+                requestAnimationFrame(tick);
+            }
+
+            function handleScan(data) {
+                let alertBox = document.getElementById('error-alert');
+                alertBox.style.display = 'none';
+                alertBox.style.color = "red";
+                alertBox.style.borderColor = "red";
+
+                let parts = data.split("|");
+
+                // if (parts.length !== 3) {
+                //     alertBox.innerText = "QR Code tidak valid!";
+                //     alertBox.style.display = 'block';
+                //     stopScanner();
+                //     return;
+                // }
+
+                let username = parts[0];
+                let nim = parts[1];
+                let qrPertemuanId = parts[2];
+
+                if (qrPertemuanId !== PER_ID) {
+                    alertBox.innerText = "Gagal !!! QR Tidak Valid.";
+                    alertBox.style.display = 'block';
+                    stopScanner();
+                    return;
+                }
+
+                if (scannedUsers.has(nim)) {
+                    alertBox.innerText = `Mahasiswa ${username} (${nim}) sudah presensi!`;
+                    alertBox.style.display = 'block';
+                    stopScanner();
+                    return;
+                }
+
+                let jamMulaiStr = "{{ p_detail.tanggal }}T{{ p_detail.mulai }}";
+                let jamMulai = new Date(jamMulaiStr);
+                let sekarang = new Date();
+                let selisihMenit = (sekarang - jamMulai) / 60000;
+
+                if (selisihMenit > 15) {
+                    alertBox.innerText = "Presensi berakhir";
+                    alertBox.style.display = 'block';
+                    stopScanner();
+                    return;
+                }
+
+                // ✅ BERHASIL
+                scannedUsers.add(nim);
+                document.getElementById('empty-text').style.display = 'none';                
+                let list = document.getElementById('list-hadir');
+                let li = document.createElement("li");
+                li.innerHTML = `
+                    <b>${scannedUsers.size}. ${username}</b> (${nim})
+                `;
+                list.appendChild(li);
+
+                // 🎉 PESAN SUKSES
+                alertBox.style.color = "Black";
+                alertBox.innerText = `Presensi berhasil: ${username} (${nim})`;
+                alertBox.style.display = 'block';
+
+                stopScanner();
+            }
+        </script>
+
+    {% else %}
+        <h2>Kelola Pertemuan</h2><hr>
+        <form action="/dosen/tambah" method="POST" style="margin-bottom: 20px;">
+            Nama    : <input type="text" name="nama" placeholder="Nama Mata Kuliah" required><br><br>
+            Tanggal : <input type="date" name="tanggal" required><br><br>
+            Mulai   : <input type="time" name="mulai" required><br><br>
+            Selesai : <input type="time" name="selesai" required><br><br>
+            <button type="submit">Buat Pertemuan Baru</button><br><hr>
+        </form>
+
+        <h3>Daftar Pertemuan Tersedia:</h3>
+        <ul>
+            {% for p in pertemuan %}
+            <li>
+                <b>web {{ p.nama }}</b> ({{ p.tanggal }}) 
+                <a href="/dosen/pertemuan/{{ p.id }}">detail</a>
+            </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</body>
+</html>
